@@ -34,7 +34,7 @@
             </div>
         </div>
 
-        <!-- Simple Form (now with real email!) -->
+        <!-- Contact Form with Real Email -->
         <div class="form-section">
             <h3>Contact Us</h3>
             <form id="contact-form">
@@ -52,14 +52,14 @@
         </div>
     </div>
 
-    <!-- Enhanced JavaScript with EmailJS -->
+    <!-- Real EmailJS Integration -->
     <script>
-        // Initialize EmailJS (you'll need to replace these with your own keys)
+        // Initialize EmailJS - Replace with your actual public key
         (function() {
-            emailjs.init("YOUR_PUBLIC_KEY"); // Replace with your EmailJS public key
+            emailjs.init("YOUR_PUBLIC_KEY");
         })();
 
-        // Handle form submission
+        // Handle form submission with real email sending
         document.getElementById('contact-form').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent default form submission
             
@@ -72,14 +72,23 @@
             statusMessage.innerHTML = '📤 Sending your message...';
             statusMessage.style.color = '#007bff';
             
-            // For demo purposes - simulate email sending
-            setTimeout(() => {
-                // Get form data
-                const name = document.querySelector('input[name="user_name"]').value;
-                const email = document.querySelector('input[name="user_email"]').value;
-                const message = document.querySelector('textarea[name="message"]').value;
-                
-                // Simulate successful send
+            // Get form data
+            const name = document.querySelector('input[name="user_name"]').value;
+            const email = document.querySelector('input[name="user_email"]').value;
+            const message = document.querySelector('textarea[name="message"]').value;
+            
+            // Send real email using EmailJS
+            emailjs.send(
+                'YOUR_SERVICE_ID',    // Replace with your service ID
+                'YOUR_TEMPLATE_ID',   // Replace with your template ID
+                {
+                    user_name: name,
+                    user_email: email,
+                    message: message
+                }
+            ).then(function(response) {
+                // Success!
+                console.log('SUCCESS!', response.status, response.text);
                 statusMessage.innerHTML = `✅ Cảm ơn ${name}! Your message has been sent successfully!`;
                 statusMessage.style.color = '#28a745';
                 
@@ -92,30 +101,19 @@
                 
                 // Show Vietnamese thank you message
                 setTimeout(() => {
-                    alert(`Xin chào ${name}! 🇻🇳\n\nYour message: "${message}"\n\nHas been received! We'll respond to ${email} soon.`);
+                    alert(`Xin chào ${name}! 🇻🇳\n\nYour real email has been sent!\n\nWe'll respond to ${email} soon.`);
                 }, 1000);
                 
-            }, 2000); // 2 second delay to simulate sending
-        });
-
-        // Simple demo function for educational purposes
-        function showEmailSetupInstructions() {
-            alert(`📧 To make this REALLY send emails:
-
-1. Sign up at emailjs.com (free)
-2. Create email service (Gmail, Outlook, etc.)
-3. Create email template
-4. Replace 'YOUR_PUBLIC_KEY' with your actual key
-5. Replace 'YOUR_SERVICE_ID' and 'YOUR_TEMPLATE_ID'
-
-For now, this is a working demo that shows the user experience!`);
-        }
-        
-        // Add click handler to show instructions
-        document.addEventListener('DOMContentLoaded', function() {
-            const footer = document.querySelector('.footer p');
-            footer.style.cursor = 'pointer';
-            footer.addEventListener('click', showEmailSetupInstructions);
+            }, function(error) {
+                // Error handling
+                console.log('FAILED...', error);
+                statusMessage.innerHTML = `❌ Sorry, there was an error sending your message. Please try again.`;
+                statusMessage.style.color = '#dc3545';
+                
+                // Reset button
+                submitButton.innerHTML = 'Send Message';
+                submitButton.disabled = false;
+            });
         });
     </script>
 </body>

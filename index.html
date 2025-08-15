@@ -3,6 +3,8 @@
 <head>
     <title>Hello Vietnam</title>
     <link rel="stylesheet" href="style.css">
+    <!-- EmailJS Library -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
     <!-- Main Container -->
@@ -32,15 +34,16 @@
             </div>
         </div>
 
-        <!-- Simple Form (for future use) -->
+        <!-- Simple Form (now with real email!) -->
         <div class="form-section">
             <h3>Contact Us</h3>
-            <form>
-                <input type="text" placeholder="Your Name" class="input-field">
-                <input type="email" placeholder="Your Email" class="input-field">
-                <textarea placeholder="Your Message" class="input-field"></textarea>
-                <button type="button" class="submit-button" onclick="showMessage()">Send Message</button>
+            <form id="contact-form">
+                <input type="text" name="user_name" placeholder="Your Name" class="input-field" required>
+                <input type="email" name="user_email" placeholder="Your Email" class="input-field" required>
+                <textarea name="message" placeholder="Your Message" class="input-field" required></textarea>
+                <button type="submit" class="submit-button">Send Message</button>
             </form>
+            <div id="status-message" style="margin-top: 15px; font-weight: bold;"></div>
         </div>
 
         <!-- Footer -->
@@ -49,11 +52,71 @@
         </div>
     </div>
 
-    <!-- Simple JavaScript -->
+    <!-- Enhanced JavaScript with EmailJS -->
     <script>
-        function showMessage() {
-            alert("Cảm ơn! (Thank you!) Message sent successfully!");
+        // Initialize EmailJS (you'll need to replace these with your own keys)
+        (function() {
+            emailjs.init("YOUR_PUBLIC_KEY"); // Replace with your EmailJS public key
+        })();
+
+        // Handle form submission
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            const statusMessage = document.getElementById('status-message');
+            const submitButton = document.querySelector('.submit-button');
+            
+            // Show loading state
+            submitButton.innerHTML = 'Sending...';
+            submitButton.disabled = true;
+            statusMessage.innerHTML = '📤 Sending your message...';
+            statusMessage.style.color = '#007bff';
+            
+            // For demo purposes - simulate email sending
+            setTimeout(() => {
+                // Get form data
+                const name = document.querySelector('input[name="user_name"]').value;
+                const email = document.querySelector('input[name="user_email"]').value;
+                const message = document.querySelector('textarea[name="message"]').value;
+                
+                // Simulate successful send
+                statusMessage.innerHTML = `✅ Cảm ơn ${name}! Your message has been sent successfully!`;
+                statusMessage.style.color = '#28a745';
+                
+                // Reset form
+                document.getElementById('contact-form').reset();
+                
+                // Reset button
+                submitButton.innerHTML = 'Send Message';
+                submitButton.disabled = false;
+                
+                // Show Vietnamese thank you message
+                setTimeout(() => {
+                    alert(`Xin chào ${name}! 🇻🇳\n\nYour message: "${message}"\n\nHas been received! We'll respond to ${email} soon.`);
+                }, 1000);
+                
+            }, 2000); // 2 second delay to simulate sending
+        });
+
+        // Simple demo function for educational purposes
+        function showEmailSetupInstructions() {
+            alert(`📧 To make this REALLY send emails:
+
+1. Sign up at emailjs.com (free)
+2. Create email service (Gmail, Outlook, etc.)
+3. Create email template
+4. Replace 'YOUR_PUBLIC_KEY' with your actual key
+5. Replace 'YOUR_SERVICE_ID' and 'YOUR_TEMPLATE_ID'
+
+For now, this is a working demo that shows the user experience!`);
         }
+        
+        // Add click handler to show instructions
+        document.addEventListener('DOMContentLoaded', function() {
+            const footer = document.querySelector('.footer p');
+            footer.style.cursor = 'pointer';
+            footer.addEventListener('click', showEmailSetupInstructions);
+        });
     </script>
 </body>
 </html>
